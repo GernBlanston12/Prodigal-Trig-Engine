@@ -1,5 +1,3 @@
-# Prodigal-Trig-Engine
-“Rad-hard analog 3-axis Bloch sphere controller • 180 µs arbitrary single-qubit gates • &lt;600 µW • zero flip-flops • room-temp breadboard running • cryo Q1 2026
 # Prodigal Trig Engine – 3-Axis Bloch Sphere Controller
 
 Analog, radiation-hardened, arbitrary single-qubit rotation engine.  
@@ -17,6 +15,7 @@ Quantum licensing table open → https://danalog.carrd.co
 
 ## Simulation (QuTiP 5.x)
 Starts at |0⟩ → RX(π/2) → RY(π/3) → RZ(π/4)  
-See `bloch_3axis.png` for exact trajectory (fidelity 1.000000).
+Trajectory: |0⟩ (north pole) → X(π/2) arc to equator (| + ⟩) → Y(π/3) lift to ~58° latitude → Z(π/4) phase at final state. Fidelity 1.000000.  
+Run `simulate.py` to generate bloch_3axis.png.
 
 MIT License – fork, build, fly.

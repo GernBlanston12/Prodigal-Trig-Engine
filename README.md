@@ -11,7 +11,7 @@ Cryo validation scheduled Q1 2026.
 63/917293 – Core trig engine  
 63/920694 – Interaural cue & Bloch sphere controller (filed Nov 2025)
 
-Quantum licensing table open → https://danalog.carrd.co
+Quantum licensing table open 
 
 ## Simulation (QuTiP 5.x)
 Starts at |0⟩ → RX(π/2) → RY(π/3) → RZ(π/4)  

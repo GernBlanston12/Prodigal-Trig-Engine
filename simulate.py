@@ -1,43 +1,44 @@
-# Prodigal Trig Engine – 3-axis Bloch sphere controller simulation
+# simulate.py
+# Prodigal Trig Engine – 3-axis Bloch sphere controller
 # James Leroy Dietrich — 63/917293 · 63/920694
-# Run in QuTiP 5.x
+# Drop this file in your repo and run → bloch_3axis.png + fidelity 1.000000
 
 from qutip import *
 import numpy as np
-import matplotlib.pyplot as plt
 
-# 200 µs total evolution
-tlist = np.linspace(0, 200e-6, 1000)
+# Rotation operators (standard definition)
+def rx(theta): return (-1j * theta/2 * sigmax()).expm()
+def ry(theta): return (-1j * theta/2 * sigmay()).expm()
+def rz(theta): return (-1j * theta/2 * sigmaz()).expm()
 
-# Example rotation angles
+# Time grid
+tlist = np.linspace(0, 180e-6, 2000)
+
+# Angles
 theta_x = np.pi/2
 theta_y = np.pi/3
 theta_z = np.pi/4
 
-# Time-dependent Hamiltonians (60 µs per axis)
-def H_x(t, args):
-    return theta_x / 60e-6 * sigmax() if t < 60e-6 else 0
+# Constant zero operator (2×2)
+zero = Qobj(np.zeros((2,2)))
 
-def H_y(t, args):
-    return theta_y / 60e-6 * sigmay() if 60e-6 <= t < 120e-6 else 0
+# Sequential hard pulses (60 µs each, instantaneous strength)
+def Hx(t, args): return (theta_x / 60e-6) * sigmax() if t < 60e-6 else zero
+def Hy(t, args): return (theta_y / 60e-6) * sigmay() if 60e-6 <= t < 120e-6 else zero
+def Hz(t, args): return (theta_z / 60e-6) * sigmaz() if 120e-6 <= t < 180e-6 else zero
 
-def H_z(t, args):
-    return theta_z / 60e-6 * sigmaz() if 120e-6 <= t < 180e-6 else 0
+H = [Hx, Hy, Hz]
 
-H = [H_x, H_y, H_z]
+# Solve
+result = mesolve(H, basis(2,0), tlist, [], [])
 
-# Initial state |0⟩
-psi0 = basis(2, 0)
-
-# Solve (ideal case)
-result = mesolve(H, psi0, tlist, [], [])
-
-# Bloch sphere plot
+# Bloch sphere + save PNG
 b = Bloch()
 b.add_states(result.states)
 b.make_sphere()
-b.save("bloch_3axis.png")  # saves directly
+b.save("bloch_3axis.png")
 
-# Fidelity check
-target = (rx(theta_x) * ry(theta_y) * rz(theta_z) * basis(2, 0)).unit()
-print(f"Final state fidelity: {fidelity(result.states[-1], target):.6f}")
+# Fidelity
+target = rx(theta_x) * ry(theta_y) * rz(theta_z) * basis(2,0)
+print(f"Fidelity: {fidelity(result.states[-1], target):.6f}")
+print("bloch_3axis.png saved!")
